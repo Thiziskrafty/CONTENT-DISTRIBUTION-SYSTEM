@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: krafty
+      POSTGRES_USER: krafty
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a strong local password}
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - krafty_db:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U krafty -d krafty"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  krafty_db:
